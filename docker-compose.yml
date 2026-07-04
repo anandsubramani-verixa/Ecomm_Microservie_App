@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # SQL Server for transactional data
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ecommerce-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Password123"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    networks:
+      - ecommerce-network
+
+  # Azure Service Bus Emulator (for local development)
+  service-bus:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    container_name: ecommerce-servicebus
+    ports:
+      - "5672:5672"  # AMQP
+      - "5300:5300"  # HTTP management
+    environment:
+      SQL_SERVER: sql-server
+      MSSQL_SA_PASSWORD: "YourStrong!Password123"
+    depends_on:
+      - sql-server
+    networks:
+      - ecommerce-network
+
+  # Cosmos DB Emulator
+  cosmos-db:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    container_name: ecommerce-cosmos
+    ports:
+      - "8081:8081"   # HTTPS
+      - "10250-10255:10250-10255"  # TCP
+    environment:
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
+    networks:
+      - ecommerce-network
+
+  # Redis for caching (Cart service later)
+  redis:
+    image: redis:7.2-alpine
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-network
+
+  # Product Service
+  product-service:
+    build:
+      context: .
+      dockerfile: src/ProductService/ProductService.API/Dockerfile
+    container_name: product-service
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=ProductDb;User=sa;Password=YourStrong!Password123;TrustServerCertificate=true
+      - ServiceBus__ConnectionString=Endpoint=sb://service-bus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE
+    ports:
+      - "5001:8080"
+    depends_on:
+      - sql-server
+      - service-bus
+    networks:
+      - ecommerce-network
+
+  # Order Service
+  order-service:
+    build:
+      context: .
+      dockerfile: src/OrderService/OrderService.API/Dockerfile
+    container_name: order-service
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=OrderDb;User=sa;Password=YourStrong!Password123;TrustServerCertificate=true
+      - ServiceBus__ConnectionString=Endpoint=sb://service-bus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE
+    ports:
+      - "5002:8080"
+    depends_on:
+      - sql-server
+      - service-bus
+    networks:
+      - ecommerce-network
+
+  # API Gateway (using Ocelot or YARP later)
+  api-gateway:
+    image: nginx:alpine
+    container_name: ecommerce-gateway
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8000:80"
+    depends_on:
+      - product-service
+      - order-service
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  sql-data:

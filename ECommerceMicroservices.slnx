@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/BuildingBlocks.CQRS/BuildingBlocks.CQRS.csproj" />
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj" />
+  </Folder>
+  <Folder Name="/src/OrderService/">
+    <Project Path="src/OrderService/OrderService.API/OrderService.API.csproj" />
+    <Project Path="src/OrderService/OrderService.Application/OrderService.Application.csproj" />
+    <Project Path="src/OrderService/OrderService.Domain/OrderService.Domain.csproj" />
+    <Project Path="src/OrderService/OrderService.Infrastructure/OrderService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/ProductService/">
+    <Project Path="src/ProductService/ProductService.API/ProductService.API.csproj" />
+    <Project Path="src/ProductService/ProductService.Application/ProductService.Application.csproj" />
+    <Project Path="src/ProductService/ProductService.Domain/ProductService.Domain.csproj" />
+    <Project Path="src/ProductService/ProductService.Infrastructure/ProductService.Infrastructure.csproj" />
+  </Folder>
+</Solution>

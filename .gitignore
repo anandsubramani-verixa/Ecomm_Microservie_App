@@ -1,0 +1,698 @@
+# ============================================
+# .NET Core / .NET 8/10 Specific
+# ============================================
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww]in32/
+[Aa]rm/
+[Aa]rm64/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+## Visual Studio specific
+.vs/
+_ReSharper*/
+*.sln.ide
+*.swx
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.cache
+*.crunch
+*.tmp
+*.tmp_proj
+*.log
+*.tlog
+*.pidb
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.bin
+*.vb
+*.vssettings2
+*.prefs
+*.dbmdl
+*.dotSettings
+*.dotSettings.user
+*.vsmdi
+*.ncrunchproject
+*.ncrunch*
+*.DotSettings.user
+*.testsettings
+*.TeamTest
+*.Coverage
+*.TestResults
+*.testresult
+
+## Project-specific files
+*.csproj.user
+*.pyproj.user
+*.vbproj.user
+*.vcxproj.user
+*.dbproj.user
+*.fsproj.user
+*.nuget.targets
+*.nuget.props
+*.bak
+*.orig
+*.bkp
+*.lock
+*.cachefile
+
+## Node.js / npm / React.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+## React specific
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+build/
+dist/
+coverage/
+.parcel-cache/
+.vite/
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vscode-test/
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/settings.json
+.history/
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+*.csproj.iml
+*.vbproj.iml
+*.fsproj.iml
+*.vcxproj.iml
+
+## Azure / Cloud
+# Azure Functions
+local.settings.json
+*.local.settings.json
+secrets.json
+secrets.*.json
+*.secrets.json
+
+# Azure DevOps / Pipelines
+*.user
+*.azure
+*.azureuser
+*.azureuserjson
+*.pubxml
+*.publishproj
+*.azureprofile
+*.azure-pipelines
+*.yml.user
+
+# Azure Key Vault (local development)
+*.keyvault.*
+*.kv.*
+*KeyVault*.json
+*keyvault*.json
+*KeyVault*.*.json
+
+# ============================================
+# Docker
+# ============================================
+docker-compose*.override.yml
+docker-compose*.override.yaml
+docker-compose*.local.yml
+docker-compose*.local.yaml
+.env.docker
+.env.docker.local
+.dockerignore.local
+
+## Docker secrets
+*.secrets
+*.secret
+*.env.secret
+.env.local
+.env.*.local
+
+## Docker volumes (local)
+docker-data/
+volumes/
+*.trn
+*.lck
+
+# ============================================
+# Kubernetes / AKS
+# ============================================
+*.kubeconfig
+*.kubeconfig.*
+kubeconfig
+kubeconfig.*
+.helm/
+helm/
+charts/*.tgz
+helmfile.yaml.lock
+helmfile.lock
+*.helmignore
+values.local.yaml
+values.*.local.yaml
+secrets.yaml
+secrets.*.yaml
+*.secret.yaml
+*.secret.yml
+
+# K3s/K8s
+k3s.yaml
+k3s.yml
+*.k3s.yaml
+*.k3s.yml
+*.k8s.yaml
+*.k8s.yml
+
+# ============================================
+# Terraform / Infrastructure as Code
+# ============================================
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# ============================================
+# Database / Data files
+# ============================================
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.trn
+*.sqllog
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.db-shm
+*.db-wal
+*.mdb
+*.accdb
+*.fdb
+*.fbk
+*.gdb
+*.dbf
+*.myd
+*.myi
+*.frm
+*.ibd
+*.ibdata
+*.idb
+*.logfile*
+*.datafile*
+
+# Entity Framework / Migrations
+*.efcore
+*.efcore.*
+/Migrations/__EFMigrationsHistory*
+
+# ============================================
+# Logs, Cache, and Temporary files
+# ============================================
+logs/
+log/
+*.log
+*.log.*
+*.txt.log
+*.json.log
+*.xml.log
+temp/
+tmp/
+*.tmp
+*.temp
+*.cache
+*.cached
+*.cspkg
+*.csupload
+*.csmapping
+*.csman
+*.csm
+*.csi
+*.exe
+*.dll
+*.pdb
+*.nupkg
+*.snupkg
+*.symbols.nupkg
+
+# ============================================
+# Health Checks / Monitoring
+# ============================================
+health/
+health-checks/
+metrics/
+*.metrics
+*.alerts
+*.alert
+
+# ============================================
+# Operating System specific
+# ============================================
+## Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.localized
+*.dmg
+*.app
+*.pkg
+*.mpkg
+*.disk
+*.sparseimage
+*.sparsebundle
+*.dmg
+
+## Linux
+*.pid
+*.pidfile
+*.lock
+*.socket
+*.sock
+*.swp
+*.swo
+*.swn
+*.un~
+*~
+
+# ============================================
+# IDE / Editor specific
+# ============================================
+## Vim
+*.swp
+*.swo
+*.un~
+.*.swp
+.*.swo
+.*.un~
+
+## Emacs
+*~
+\#*#
+.\#*
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+## Sublime Text
+*.sublime-project
+*.sublime-workspace
+*.sublime-settings
+.sublime/
+
+## Atom
+.atom/
+*.atom
+.nuclide/
+.npmrc
+
+## Notepad++
+*.npp
+*.npp.*
+*.npp.bak
+
+# ============================================
+# Backup / Archive files
+# ============================================
+*.backup
+*.bak
+*.orig
+*.old
+*.previous
+*.prev
+*.save
+*.saved
+*.~*
+*.archive
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.zip
+*.rar
+*.7z
+*.bz2
+*.xz
+*.lzma
+*.zst
+
+# ============================================
+# CI/CD and Build tools
+# ============================================
+## GitHub Actions
+.github/actions/
+.github/workflows/*.local.yml
+.github/workflows/*.local.yaml
+.github/ISSUE_TEMPLATE/
+.github/PULL_REQUEST_TEMPLATE/
+
+## Azure DevOps
+.azure-pipelines/
+azure-pipelines.yml
+azure-pipelines.*.yml
+azure-pipelines.*.yaml
+*.azure-pipelines
+*.azure-pipelines.yml
+
+## Jenkins
+.jenkins/
+jenkins/
+*.jenkins
+*.jenkinsfile
+*.groovy
+
+## TeamCity
+.teamcity/
+teamcity/
+
+## Octopus Deploy
+.octopus/
+octopus/
+
+# ============================================
+# Environment and Configuration files
+# ============================================
+.env
+.env.*
+!.env.example
+!.env.template
+*.env.example
+*.env.template
+*.env.sample
+*.env.local
+*.env.development
+*.env.test
+*.env.staging
+*.env.production
+*.env.dev
+*.env.prod
+*.env.qa
+*.env.uat
+*.env.ci
+
+# ============================================
+# Application specific
+# ============================================
+## Your E-Commerce Microservices specific
+/health/
+/status/
+/*.health
+/*.status
+/coverage/
+/TestResults/
+
+## Serilog / Seq logs
+/*.seq
+/seq-data/
+/Seq/
+*.seq.json
+*.seq.txt
+
+## Elasticsearch / Kibana logs
+/elastic-data/
+/elk-data/
+/kibana-data/
+*.elastic
+*.elk
+
+## Prometheus / Grafana
+/prometheus-data/
+/grafana-data/
+/monitoring/
+*.prometheus
+*.grafana
+
+## Azure Service Bus emulator
+/service-bus-data/
+/sb-emulator/
+*.sbdb
+
+## Cosmos DB emulator
+/cosmos-data/
+/cosmos-emulator/
+*.cosmosdb
+*.cosmos
+
+## Redis data
+/redis-data/
+/redis-cache/
+*.rdb
+*.aof
+
+## SQL Server data
+/sql-data/
+/mssql-data/
+*.mdf
+*.ldf
+
+## Test artifacts
+/TestResults/
+/coverage/
+/TestResults.*/
+*.trx
+*.coverage
+*.coveragexml
+*.codecoverage
+*.codecoveragexml
+
+# ============================================
+# Documentation / Build artifacts
+# ============================================
+*.docset
+*.docset.zip
+*.docset.tar.gz
+*.chm
+*.epub
+*.mobi
+*.pdf
+*.docx
+*.rtf
+
+# ============================================
+# Security / Sensitive files
+# ============================================
+*.pem
+*.cer
+*.crt
+*.key
+*.p12
+*.pfx
+*.p7b
+*.p7c
+*.p7s
+*.p7z
+*.spc
+*.sst
+*.stl
+*.csr
+*.crl
+*.der
+*.pvk
+*.snk
+*.strongname
+*.publickey
+*.privatekey
+*.cert
+*.certificate
+*.keystore
+*.truststore
+*.jks
+*.bks
+*.ks
+*.ts
+*.trust
+*.secret.*
+*.private.*
+*.sensitive.*
+*password*
+*passwd*
+*credential*
+*secret*
+*.pwd
+*.pswd
+*.pw
+
+# ============================================
+# Package managers
+# ============================================
+## NuGet
+packages/
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+*.nuget.cache
+*.nuget.lock
+NuGet.Config
+NuGet.config
+*.nuget.config
+*.NuGet.Config
+*.NuGet.config
+
+## npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+## Composer
+composer.phar
+/vendor/
+composer.lock
+
+## Pip
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# ============================================
+# Dependencies
+# ============================================
+dependencies/
+dependency/
+packages/
+*.deps.json
+*.runtimeconfig.json
+*.runtimeconfig.dev.json
+*.ref/
+*.symbols/
+
+# ============================================
+# Test / Coverage
+# ============================================
+*.test
+*.tests
+*.tests.*
+*.spec
+*.spec.*
+*.feature
+*.feature.*
+*.step
+*.steps
+*.acceptance
+*.integration
+*.unit
+
+# ============================================
+# Various others
+# ============================================
+*.orig
+*.old
+*.new
+*.patch
+*.diff
+*.merge
+*.merged
+*.mergebackup
+*.mergebackup.*
+*.autosave
+*.autosave.*
+*.backup
+*.sav
+*.save
+*.swp
+*.swo
+
+# ============================================
+# Special: Keep example files
+# ============================================
+!.env.example
+!.env.template
+!appsettings.*.example.json
+!appsettings.*.template.json
+!*.example
+!*.template
+!*.sample
