@@ -1,18 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using ProductService.Infrastructure.Data;
-using ProductService.Application.Products.Commands;
-using BuildingBlocks.CQRS;
 using Serilog;
+using System.Text.Json;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MediatR;
+using ProductService.Application.Products.Commands;   // CreateProductCommand
+using ProductService.Application.Behaviors;          // ValidationBehavior, LoggingBehavior
+using ProductService.Application.Products.Queries;   // GetProductsQuery
+using ProductService.Infrastructure.Products.Queries; // GetProductsQueryHandler
 
 var builder = WebApplication.CreateBuilder(args);
 
-// .NET 10 improvements
+// JSON options
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
-// Configure Serilog
+// Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
@@ -22,10 +27,9 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services
+// Services
 builder.Services.AddControllers();
-builder.Services.AddOpenApi(); // .NET 10 built-in OpenAPI support
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();   // built-in OpenAPI
 
 // Database
 builder.Services.AddDbContext<ProductDbContext>(options =>
@@ -37,7 +41,14 @@ builder.Services.AddDbContext<ProductDbContext>(options =>
 // CQRS MediatR
 builder.Services.AddMediatR(cfg =>
 {
+    // Register Application layer (commands/queries)
     cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetProductsQuery).Assembly);
+
+    // Register Infrastructure layer (handlers)
+    cfg.RegisterServicesFromAssembly(typeof(GetProductsQueryHandler).Assembly);
+
+    // Pipeline behaviors
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
     cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
@@ -52,49 +63,42 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ProductDbContext>();
 
-// .NET 10: Native API Gateway support (YARP)
+// Reverse Proxy (YARP)
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 var app = builder.Build();
 
-// .NET 10: Map OpenAPI endpoints
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    
-    // Auto migrate database
+    app.MapOpenApi();   // OpenAPI endpoint
+
+    // Auto migrate DB
     await using var scope = app.Services.CreateAsyncScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
     await dbContext.Database.MigrateAsync();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 
-// .NET 10: Minimal API with Typed Results
+// Minimal API endpoints
 app.MapPost("/api/products", async (CreateProductCommand command, IMediator mediator) =>
 {
-    var result = await mediator.Send(command);
-    return TypedResults.Created($"/api/products/{result.Id}", result);
+    var id = await mediator.Send(command); // returns int
+    return TypedResults.Created($"/api/products/{id}", new { Id = id });
 })
-.WithName("CreateProduct")
-.WithOpenApi();
+.WithName("CreateProduct");
 
 app.MapGet("/api/products", async (IMediator mediator) =>
 {
-    var query = new GetProductsQuery();
-    var result = await mediator.Send(query);
+    var result = await mediator.Send(new GetProductsQuery());
     return TypedResults.Ok(result);
 })
-.WithName("GetProducts")
-.WithOpenApi();
+.WithName("GetProducts");
 
-app.MapReverseProxy(); // .NET 10 built-in reverse proxy
+app.MapReverseProxy(); // reverse proxy
 
 app.Run();
