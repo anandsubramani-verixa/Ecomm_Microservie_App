@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderService.Domain.Entities;
-using System.Reflection.Emit;
 
 namespace OrderService.Infrastructure.Data;
 
 public class OrderDbContext : DbContext
 {
-    public OrderDbContext(DbContextOptions<OrderDbContext> options) : base(options) { }
+    public OrderDbContext(DbContextOptions<OrderDbContext> options)
+        : base(options)
+    {
+    }
 
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
@@ -17,5 +19,9 @@ public class OrderDbContext : DbContext
             .HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey(i => i.OrderId);
+
+        modelBuilder.Entity<OrderItem>()
+            .Property(i => i.ProductId)
+            .IsRequired();
     }
 }

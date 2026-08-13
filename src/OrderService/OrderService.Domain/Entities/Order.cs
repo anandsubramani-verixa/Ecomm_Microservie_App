@@ -13,7 +13,9 @@ public class OrderItem
 {
     public Guid Id { get; set; }
     public Guid OrderId { get; set; }
-    public Guid ProductId { get; set; }
+    // ProductService uses int IDs, so OrderItem must use int as well.
+    // This is an identifier across microservices, not a SQL FK to ProductService.
+    public int ProductId { get; set; }
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
 }

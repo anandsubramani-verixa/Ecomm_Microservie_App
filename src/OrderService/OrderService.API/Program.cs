@@ -11,6 +11,13 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:4200") // Angular dev server
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
 
 // Serilog
 Log.Logger = new LoggerConfiguration()
@@ -48,6 +55,7 @@ if (app.Environment.IsDevelopment())
     var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
     await dbContext.Database.MigrateAsync();
 }
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

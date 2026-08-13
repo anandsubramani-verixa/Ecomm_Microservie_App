@@ -22,7 +22,7 @@ namespace OrderService.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderService.Domain.Order", b =>
+            modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace OrderService.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("OrderService.Domain.OrderItem", b =>
+            modelBuilder.Entity("OrderService.Domain.Entities.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,8 +52,8 @@ namespace OrderService.Infrastructure.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -68,16 +68,16 @@ namespace OrderService.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("OrderService.Domain.OrderItem", b =>
+            modelBuilder.Entity("OrderService.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("OrderService.Domain.Order", null)
+                    b.HasOne("OrderService.Domain.Entities.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OrderService.Domain.Order", b =>
+            modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Items");
                 });
