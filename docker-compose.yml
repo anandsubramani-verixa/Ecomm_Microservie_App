@@ -62,12 +62,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings__DefaultConnection=Server=ecommerce-sql;Database=ProductDb;User=sa;Password=AzureThink82#;TrustServerCertificate=true"
+      - "ConnectionStrings__Redis=ecommerce-redis:6379"
       - "ServiceBus__ConnectionString=Endpoint=sb://ecommerce-servicebus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE"
     ports:
       - "5001:8080"
     depends_on:
       - ecommerce-sql
       - ecommerce-servicebus
+      - ecommerce-redis
+ 
     networks:
       - ecommerce-network
 
