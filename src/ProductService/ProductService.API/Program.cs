@@ -2,103 +2,194 @@ using Microsoft.EntityFrameworkCore;
 using ProductService.Infrastructure.Data;
 using Serilog;
 using System.Text.Json;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MediatR;
-using ProductService.Application.Products.Commands;   // CreateProductCommand
-using ProductService.Application.Behaviors;          // ValidationBehavior, LoggingBehavior
-using ProductService.Application.Products.Queries;   // GetProductsQuery
-using ProductService.Infrastructure.Products.Queries; // GetProductsQueryHandler
+using ProductService.Application.Products.Commands;
+using ProductService.Application.Behaviors;
+using ProductService.Application.Products.Queries;
+using ProductService.Infrastructure.Products.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// JSON options
+// ---------------------------------------------------------
+// JSON
+// ---------------------------------------------------------
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
+// ---------------------------------------------------------
+// CORS
+// ---------------------------------------------------------
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// ---------------------------------------------------------
 // Serilog
+// ---------------------------------------------------------
+
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .WriteTo.File("logs/product-service-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(
+        "logs/product-service-.txt",
+        rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
-// Services
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();   // built-in OpenAPI
+// ---------------------------------------------------------
+// Controllers / OpenAPI
+// ---------------------------------------------------------
 
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
+// ---------------------------------------------------------
 // Database
+// ---------------------------------------------------------
+
 builder.Services.AddDbContext<ProductDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.EnableRetryOnFailure(5)
-    ));
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(5);
+        }));
 
-// CQRS MediatR
+// ---------------------------------------------------------
+// CQRS / MediatR
+// ---------------------------------------------------------
+
 builder.Services.AddMediatR(cfg =>
 {
-    // Register Application layer (commands/queries)
-    cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetProductsQuery).Assembly);
+    // Application commands
+    cfg.RegisterServicesFromAssembly(
+        typeof(CreateProductCommand).Assembly);
 
-    // Register Infrastructure layer (handlers)
-    cfg.RegisterServicesFromAssembly(typeof(GetProductsQueryHandler).Assembly);
+    // Application queries
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetProductsQuery).Assembly);
+
+    // Infrastructure handlers
+    cfg.RegisterServicesFromAssembly(
+        typeof(GetProductsQueryHandler).Assembly);
 
     // Pipeline behaviors
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
     cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
-// Caching
+// ---------------------------------------------------------
+// Redis Distributed Cache
+// ---------------------------------------------------------
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration =
+        builder.Configuration.GetConnectionString("Redis");
+
+    options.InstanceName = "ProductService:";
 });
 
+// ---------------------------------------------------------
 // Health Checks
-builder.Services.AddHealthChecks()
+// ---------------------------------------------------------
+
+builder.Services
+    .AddHealthChecks()
     .AddDbContextCheck<ProductDbContext>();
 
-// Reverse Proxy (YARP)
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+// ---------------------------------------------------------
+// YARP Reverse Proxy
+// ---------------------------------------------------------
+
+builder.Services
+    .AddReverseProxy()
+    .LoadFromConfig(
+        builder.Configuration.GetSection("ReverseProxy"));
+
+// ---------------------------------------------------------
+// Build application
+// ---------------------------------------------------------
 
 var app = builder.Build();
 
+// ---------------------------------------------------------
+// Development
+// ---------------------------------------------------------
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();   // OpenAPI endpoint
+    app.MapOpenApi();
 
-    // Auto migrate DB
+    // Auto migrate database
     await using var scope = app.Services.CreateAsyncScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
+
+    var dbContext =
+        scope.ServiceProvider
+            .GetRequiredService<ProductDbContext>();
+
     await dbContext.Database.MigrateAsync();
 }
 
+// ---------------------------------------------------------
+// Middleware
+// ---------------------------------------------------------
+
+app.UseCors("AllowFrontend");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.MapHealthChecks("/health");
 
-// Minimal API endpoints
-app.MapPost("/api/products", async (CreateProductCommand command, IMediator mediator) =>
-{
-    var id = await mediator.Send(command); // returns int
-    return TypedResults.Created($"/api/products/{id}", new { Id = id });
-})
-.WithName("CreateProduct");
+// ---------------------------------------------------------
+// Product endpoints
+// ---------------------------------------------------------
 
-app.MapGet("/api/products", async (IMediator mediator) =>
-{
-    var result = await mediator.Send(new GetProductsQuery());
-    return TypedResults.Ok(result);
-})
-.WithName("GetProducts");
+app.MapPost(
+    "/api/products",
+    async (
+        CreateProductCommand command,
+        IMediator mediator) =>
+    {
+        var id = await mediator.Send(command);
 
-app.MapReverseProxy(); // reverse proxy
+        return TypedResults.Created(
+            $"/api/products/{id}",
+            new { Id = id });
+    })
+    .WithName("CreateProduct");
+
+app.MapGet(
+    "/api/products",
+    async (IMediator mediator) =>
+    {
+        var result =
+            await mediator.Send(new GetProductsQuery());
+
+        return TypedResults.Ok(result);
+    })
+    .WithName("GetProducts");
+
+// ---------------------------------------------------------
+// Reverse Proxy
+// ---------------------------------------------------------
+
+app.MapReverseProxy();
 
 app.Run();
